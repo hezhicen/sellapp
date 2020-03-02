@@ -50,13 +50,26 @@ export default {
   data() {
     return {
       data: [],
-      Scoring:4,
+      Scoring: 4
     };
   },
   created() {
     getRatings().then(res => {
       this.data = res.data.data;
-      console.log(res.data.data);
+      //时间戳转换格式
+      this.data.forEach(function(v) {
+        function newtime(sjx) {
+            var sj = new Date(sjx);
+            var year = sj.getFullYear();
+            var month = sj.getMonth() + 1; if (month < 10) { month = '0' + month; }
+            var day = sj.getDate(); if (day < 10) { day = '0' + day; }
+            var hours = sj.getHours(); if (hours < 10) { hours = '0' + hours; }
+            var minutes = sj.getMinutes(); if (minutes < 10) { minutes = '0' + minutes; }
+            var seconds = sj.getSeconds(); if (seconds < 10) { seconds = '0' + seconds; }
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        }
+      v.rateTime=newtime(v.rateTime);
+      });
     });
   }
 };
@@ -89,9 +102,9 @@ export default {
     line-height: 32px;
     color: #333;
     font-weight: 600;
-    .ivu-rate{
-        width: 120px;
-        font-size: 16px;
+    .ivu-rate {
+      width: 120px;
+      font-size: 16px;
     }
   }
 }
@@ -147,17 +160,17 @@ export default {
             color: #000;
           }
         }
-        .howtime{
-            .ivu-rate{
-                font-size: 12px;
-            }
+        .howtime {
+          .ivu-rate {
+            font-size: 12px;
+          }
         }
-        .content-text{
-            color: #000;
-            font-size: 16px;
-            line-height: 20px;
-            padding: 8px 0px;
-            font-weight: 600;
+        .content-text {
+          color: #000;
+          font-size: 16px;
+          line-height: 20px;
+          padding: 8px 0px;
+          font-weight: 600;
         }
         .recommend {
           .ivu-icon-ios-thumbs-up {

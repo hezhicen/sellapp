@@ -1,6 +1,7 @@
 <template>
     <div id="goods">
-         <div class="goods-left">
+      <!-- 左侧 -->
+        <div class="goods-left">
             <p v-for="(v,i) in data" :key="i" @click="setactivewhite(i)" :class="{menu:true,actvieWhite:i==indexone?true:false}">
               <img style="width:12px" v-show='v.type==1' src="../assets/imgs/decrease_3@2x.png" >
               <img style="width:12px" v-show='v.type==2' src="../assets/imgs/discount_1@2x.png">
@@ -8,7 +9,7 @@
             </p>
         </div> 
 
-
+      <!-- 右侧 -->
         <div class="goods-right">
           <!-- 只要使用better-scroll效果，必须在使用的节点下放入一个class名为content的ul -->
           <ul class="content">
@@ -24,7 +25,11 @@
                         <p class="pay">
                             <span class="money01">￥{{x.price}}</span>
                             <span class="money02">{{x.oldPrice}}</span>
-                            <span class="add"><Icon type="md-add-circle" /></span>
+                            <span class="add">
+                              <Icon type="md-remove-circle" v-show="x.num> 0" @click="clickDec(i,y)"/>
+                              <strong v-show="x.num > 0">{{x.num}}</strong>
+                              <Icon type="md-add-circle" @click="clickAdd(i,y)" />
+                            </span>
                         </p>
                     </div>
                 </div>
@@ -43,29 +48,75 @@ import BScroll from "better-scroll";
 export default {
   data() {
     return {
-      data: [],
-      indexone:0,
-      gr:''
+      // data: [],
+      //左右联动存放索引
+      indexone: 0
     };
   },
   created() {
-    getGoods(1).then(res => {
-      this.data = res.data.data;
+    // 发送请求返回数据
+    getGoods().then(res => {
+      //要改变vuex中的内容！！commit + mutation
+      this.$store.commit("goodsdata", res.data.data);
     });
   },
   mounted() {
     //实例化滚动版,挂载到当前组件上
-    this.gr= new BScroll(document.querySelector(".goods-right"),{
+    this.gr = new BScroll(document.querySelector(".goods-right"), {
       //允许点击
-      click:true,
+      click: true,
+      //实时派发滚动事件
+      probeType: 3
     });
-    
+    //滚动事件
+    this.gr.on("scroll", ({ y }) => {
+      // 右连左
+      //获取移动高度绝对值
+      let _y = Math.abs(y);
+      //循环
+      for (let divObj of this.getDomMath) {
+        if (_y >= divObj.min && _y < divObj.max) {
+          this.indexone = divObj.index;
+          return; //结束后面的循环
+        }
+      }
+    });
   },
-  methods:{
-    setactivewhite(i){
-      this.indexone=i;
-      this.gr.scrollToElement(document.getElementById(i),300)
+  computed: {
+    //盒子高度算法
+    getDomMath() {
+      let arr = [];
+      let total = 0;
+      for (let i = 0; i < this.data.length; i++) {
+        //获取每个节点的高
+        let domHeight = document.getElementById(i).offsetHeight;
+        //运算后放入新数组
+        arr.push({ min: total, max: total + domHeight, index: i });
+        //每循环一次累加
+        total += domHeight;
+      }
+      //返回结果
+      return arr;
+    },
+    //获取vuex中的共享数据
+    data() {
+      return this.$store.state.list;
     }
+  },
+  methods: {
+    //右连左
+    setactivewhite(i) {
+      this.indexone = i;
+      this.gr.scrollToElement(document.getElementById(i), 300);
+    },
+    //数量减少
+     clickDec(i,y) {
+      this.$store.commit('numChangeDec',{i,y})
+    },
+    //数量增加
+    clickAdd(i,y) {
+      this.$store.commit('numChangeAdd',{i,y})
+    }  
   }
 };
 </script>
@@ -82,14 +133,15 @@ export default {
       padding: 8px 3px 8px 8px;
       background: #f3f6f6;
     }
-    .actvieWhite{
+    .actvieWhite {
       background: white;
     }
   }
   //右
   .goods-right {
     flex: 1;
-    height: 530px;
+    height: 522px;
+    // height: 100%;
     overflow: hidden;
     // padding-left: 80px;
     position: relative;

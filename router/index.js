@@ -21,10 +21,7 @@ const routes = [
         path: '/merchant',
         component: () => import('../views/Merchant.vue'),
       },
-      {
-        path: '/shopcar',
-        component: () => import('../views/Shopcar.vue'),
-      },
+     
     ]
   }
 ]
