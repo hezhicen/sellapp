@@ -20,9 +20,10 @@
         <router-view></router-view>
         <!-- 购物车条 -->
         <div id="shopcar-bar">
-            <div class="car" @click="canshow=!canshow">
+          <!--  -->
+            <div  id="car" @click="canshow=!canshow" :class="goodsoneAllmoney==0?false:'bgc'">
                 <div class="carnum" v-show="goodscarsum==0?false:true">{{goodscarsum}}</div>
-                <img src="../assets/imgs/shopping_cart.svg" alt="">
+                <img src="../assets/imgs/shopping_cart.svg" >
             </div>
             <p><span :class="goodsoneAllmoney==0?false:'allmeony'">￥{{goodsoneAllmoney}}</span>另需配送费￥4元</p>
             <div class="shopping"><strong :class="goodsoneAllmoney<20?false:'xxx'" v-text="goodsoneAllmoney<20?car20:cargo"></strong></div> 
@@ -36,12 +37,14 @@
               <div class="gootstxt">
                   <p class="goots-tit">{{v.name}}</p>
                   <p class="pay" >
-                      <span class="money01" >￥{{v.price}}</span>
+                      <span class="money01" >￥{{v.price * v.num}}  </span>
                       <span class="money02">{{v.oldPrice}}</span>
                       <span class="add">
-                        <Icon type="md-remove-circle" v-show="v.num> 0" @click="carchangedel(v.name,i)" />
+                        <!-- <Icon type="md-remove-circle" v-show="v.num> 0" @click="carchangedel(v.name,i)" /> -->
+                        <Icon type="md-remove-circle" v-show="v.num> 0" @click="carchange(v.name,-1)" />
                         <strong >{{v.num}}</strong>
-                        <Icon type="md-add-circle"  v-show="v.num> 0" @click="carchangeadd(v.name,i)"/>   
+                        <!-- <Icon type="md-add-circle"  v-show="v.num> 0" @click="carchangeadd(v.name,i)"/>    -->
+                        <Icon type="md-add-circle"  v-show="v.num> 0" @click="carchange(v.name,+1)"/>   
                       </span>
                   </p>
               </div>
@@ -73,18 +76,18 @@ export default {
   },
   methods: {
     //减
-    carchangedel(name, i) {
+  /*   carchangedel(name, i) {
       this.$store.commit("carchangedel", { name, i });
-      this.deladd(i);
     },
     // 加
     carchangeadd(name, i) {
       this.$store.commit("carchangeadd", { name, i });
-      this.deladd(i);   
+    }, */
+    //加减
+    carchange(name, val) {
+      this.$store.commit("carchange", { name, val });
     },
-    deladd(x){
-      console.log( this.goodsonemoney[x])
-    }
+  
   },
   mounted() {
   },
@@ -112,14 +115,7 @@ export default {
       }
       return sum;
     },
-    //购物车商品单价
-    goodsonemoney() {
-      var list = [];
-      for (let j = 0; j < this.datas.length; j++) {
-        list.push(this.datas[j].num * this.datas[j].price);
-      }
-      return list;
-    },
+  
     //购物车商品总价
     goodsoneAllmoney() {
       var sum = 0;
@@ -139,6 +135,9 @@ export default {
 <style lang="less">
 .allmeony{
   color: red;
+}
+.bgc{
+  background:rgb(248, 151, 5)!important;
 }
 //头部样式
 .bkg {
@@ -262,7 +261,7 @@ export default {
   bottom: 0;
   display: flex;
   z-index: 9;
-  .car {
+  #car {
     width: 60px;
     height: 60px;
     background: #2a353a;

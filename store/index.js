@@ -18,15 +18,15 @@ export default new Vuex.Store({
             state.list = data;
         },
         //页面商品数量增加
-        numChangeAdd(state, x) {
+        /* numChangeAdd(state, x) {
             state.list[x.i].foods[x.y].num += 1;
         },
         //页面商品数量减少
         numChangeDec(state, x) {
             state.list[x.i].foods[x.y].num -= 1;
-        },
+        }, */
         //购物车商品数量减
-        carchangedel(state, x) {
+        /* carchangedel(state, x) {
             for (let i of state.list) {
                 for (let j of i.foods) {
                     if (j.name == x.name) {
@@ -44,7 +44,17 @@ export default new Vuex.Store({
                     }
                 }
             }
-        }
+        }, */
+         //购物车商品数量减
+         carchange(state, x) {
+            for (let i of state.list) {
+                for (let j of i.foods) {
+                    if (j.name == x.name) {
+                        j.num+=x.val;
+                    }
+                }
+            }
+        },
     },
     //vuex版的计算属性，和computed原理一样，会缓存数据
     getters: {

@@ -26,9 +26,12 @@
                             <span class="money01">￥{{x.price}}</span>
                             <span class="money02">{{x.oldPrice}}</span>
                             <span class="add">
-                              <Icon type="md-remove-circle" v-show="x.num> 0" @click="clickDec(i,y)"/>
+                              <!-- <Icon type="md-remove-circle" v-show="x.num> 0" @click="clickDec(i,y)"/> -->
+                              <Icon type="md-remove-circle" v-show="x.num> 0" @click="carchange(x.name,-1)"/>
+                                
                               <strong v-show="x.num > 0">{{x.num}}</strong>
-                              <Icon type="md-add-circle" @click="clickAdd(i,y)" />
+                              <!-- <Icon type="md-add-circle" @click="clickAdd(i,y)" /> -->
+                              <Icon type="md-add-circle" @click="carchange(x.name,+1)" />
                             </span>
                         </p>
                     </div>
@@ -109,14 +112,19 @@ export default {
       this.indexone = i;
       this.gr.scrollToElement(document.getElementById(i), 300);
     },
-    //数量减少
+   /*  //数量减少
      clickDec(i,y) {
       this.$store.commit('numChangeDec',{i,y})
     },
     //数量增加
     clickAdd(i,y) {
       this.$store.commit('numChangeAdd',{i,y})
-    }  
+    }   */
+    //加减
+    carchange(name, val) {
+      this.$store.commit("carchange", { name, val });
+    },
+  
   }
 };
 </script>
